@@ -1,0 +1,51 @@
+---
+title: "Athabasca Dataset"
+output: html_notebook
+---
+
+
+
+```{r}
+
+library(tidyverse)
+library(RGeostats)
+
+well_locations_tops <- read_csv('data/MannvilleWells_LatLong.csv')
+
+drop_na(well_locations_tops, "Pick")
+
+```
+```{r}
+scatter <- ggplot(well_locations_tops, aes(x = lng, y = lat)) + geom_point(aes(color=Pick))
+scatter
+```
+
+
+```{r}
+data.db = db.create(well_locations_tops)
+print(data.db)
+```
+```{r}
+print(data.db, flag.stats=TRUE, names=6)
+
+data.db = db.locate(data.db, "lng", "x", 1)
+data.db = db.locate(data.db, "lat", "x", 2)
+data.db = db.locate(data.db,"Pick","z", 1)
+
+```
+```{r}
+plot(data.db, pch=21, bg="red", col="black")
+```
+
+```{r}
+data.vario = vario.calc(data.db, lag=1, nlag=10)
+plot(data.vario, npairdw=TRUE, npairpt=1)
+```
+
+
+```{r}
+data.4dir.vario =
+  vario.calc(data.db,lag=1,nlag=10,dir=c(0,45,90,135))
+plot(data.4dir.vario,title="Directional variograms")
+```
+
